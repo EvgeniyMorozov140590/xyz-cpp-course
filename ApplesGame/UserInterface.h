@@ -10,9 +10,7 @@ namespace ApplesGame
 		sf::Text gameOverText;
 		sf::Text gameModeText;
 		std::vector<sf::Text> recordsText;
-		
-		bool isGameOverTextVisible = false;
-		bool isRecordsTextVisible = false;
+		sf::Text exitDialogText;
 	};
 
 	struct Game;
@@ -21,5 +19,5 @@ namespace ApplesGame
 
 	void UpdateUserInterface(UserInterface& userInterface, const Game& game);
 
-	void DrawUserInterface(UserInterface& userInterface, sf::RenderWindow& window);
+	void DrawUserInterface(const Game& game, sf::RenderWindow& window);
 }

@@ -10,44 +10,73 @@
     <ClCompile Include="GameMain.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Apple.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Rock.cpp">
+    <ClCompile Include="Player.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="UserInterface.cpp">
+    <ClCompile Include="GameStatePlaying.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateGameOver.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateExitDialog.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateMainMenu.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateRecords.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Constants.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Apple.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
+    <ClInclude Include="GameSettings.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Rock.h">
+    <ClInclude Include="Math.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="UserInterface.h" />
+    <ClInclude Include="PlayingState.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStatePlaying.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateGameOver.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateExitDialog.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateMainMenu.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateRecords.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

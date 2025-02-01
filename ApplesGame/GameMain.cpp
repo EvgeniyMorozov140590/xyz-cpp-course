@@ -1,62 +1,64 @@
 ﻿// ©2023, XYZ School. All rights reserved.
 // Authored by Aleksandr Rybalka (polterageist@gmail.com)
+
+#include <SFML/Graphics.hpp>
+#include <cstdlib>
+
 #include "Game.h"
 
+using namespace ApplesGame;
+
 int main()
-{	
-	using namespace ApplesGame;
-
-	int seed = (int)time(nullptr);
-
+{
+	// Init random number generator
+	unsigned int seed = (unsigned int)time(nullptr); // Get current time as seed. You can also use any other number to fix randomization
 	srand(seed);
 
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game");
+	// Init window
+	sf::RenderWindow window(sf::VideoMode(ApplesGame::SCREEN_WIDTH, ApplesGame::SCREEN_HEGHT), "AppleGame");
 
-	Game game;
+	// We now use too much memory for stack, so we need to allocate it on heap
+	ApplesGame::Game* game = new ApplesGame::Game();
+	InitGame(*game);
 
-	InitGame(game);
+	// Init game clock
+	sf::Clock game_clock;
+	sf::Time lastTime = game_clock.getElapsedTime();
 
-	sf::Clock gameClock;
-	float lastTime = gameClock.getElapsedTime().asSeconds();
-
+	// Game loop
 	while (window.isOpen())
 	{
-		sf::sleep(sf::milliseconds(16));
+		HandleWindowEvents(*game, window);
 
-		sf::Event event;
-
-		while (window.pollEvent(event))
+		if (!window.isOpen())
 		{
-			if (event.type == sf::Event::Closed) 
-			{
-				window.close();
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-			{
-				RestartGame(game, gameClock);
-			}
-			else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num1)
-			{
-				ToggleGameSettings(game, GameSettings::InfiniteApples);
-			}
-			else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Num2)
-			{
-				ToggleGameSettings(game, GameSettings::Acceleration);
-			}
+			break;
 		}
 
-		float currentTime = gameClock.getElapsedTime().asSeconds();
-		float deltaTime = currentTime - lastTime;
+		// Calculate time delta
+		sf::Time currentTime = game_clock.getElapsedTime();
+		float timeDelta = currentTime.asSeconds() - lastTime.asSeconds();
 		lastTime = currentTime;
+		if (UpdateGame(*game, timeDelta))
+		{
+			// Draw everything here
+		// Clear the window first
+			window.clear();
 
-		UpdateGame(game, deltaTime, currentTime);
+			DrawGame(*game, window);
 
-		window.clear();
-
-		DrawGame(game, window);
-
-		window.display();
+			// End the current frame, display window contents on screen
+			window.display();
+		}
+		else
+		{
+			window.close();
+		}
 	}
+
+	ShutdownGame(*game);
+	delete game;
+	game = nullptr;
 
 	return 0;
 }

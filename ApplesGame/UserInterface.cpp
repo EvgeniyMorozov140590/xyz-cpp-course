@@ -37,8 +37,15 @@ namespace ApplesGame
 		userInterface.gameOverText.setOrigin(gameOverOrigin.x, gameOverOrigin.y);
 		userInterface.gameOverText.setPosition(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 3.f);
 
-		userInterface.isGameOverTextVisible = false;
-		userInterface.isGameOverTextVisible = false;
+		userInterface.exitDialogText.setFont(game.font);
+		userInterface.exitDialogText.setCharacterSize(24);
+		userInterface.exitDialogText.setFillColor(sf::Color::Yellow);
+		userInterface.exitDialogText.setString("Do you wanna exit?\n Press Enter - main menu | ESC - continue" );
+
+		const Position2D exitDialogTextOrigin = GetTextOrigin(userInterface.exitDialogText);
+
+		userInterface.exitDialogText.setOrigin(exitDialogTextOrigin.x, exitDialogTextOrigin.y);
+		userInterface.exitDialogText.setPosition(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 3.f);
 
 		userInterface.recordsText.clear();
 	}
@@ -89,33 +96,32 @@ namespace ApplesGame
 					text.setFillColor(sf::Color::Yellow);
 				}
 			};
-
-			userInterface.isGameOverTextVisible = true;
-			userInterface.isRecordsTextVisible = true;
-		}
-		else {
-			userInterface.isGameOverTextVisible = false;
-			userInterface.isRecordsTextVisible = false;
 		}
 	}
 
-	void DrawUserInterface(UserInterface& userInterface, sf::RenderWindow& window)
+	void DrawUserInterface(const Game& game, sf::RenderWindow& window)
 	{
-		window.draw(userInterface.scoreText);
-		window.draw(userInterface.hintText);
-		window.draw(userInterface.gameModeText);
+		window.draw(game.userInterface.scoreText);
+		window.draw(game.userInterface.hintText);
+		window.draw(game.userInterface.gameModeText);
 
-		if (userInterface.isGameOverTextVisible)
+		if (game.gameStateStack.back() == GameState::GameOver)
 		{
-			window.draw(userInterface.gameOverText);
+			window.draw(game.userInterface.gameOverText);
 		}
 
-		if (userInterface.isRecordsTextVisible)
+		if (game.gameStateStack.back() == GameState::GameOver)
 		{
-			for (sf::Text item : userInterface.recordsText)
+			for (sf::Text item : game.userInterface.recordsText)
 			{
 				window.draw(item);
 			}
+		}
+
+		if (game.gameStateStack.back() == GameState::ExitDialog)
+		{
+			window.clear(sf::Color::Black);
+			window.draw(game.userInterface.exitDialogText);
 		}
 	}
 }

@@ -1,67 +1,81 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <unordered_map>
+
 #include "Player.h"
 #include "Apple.h"
-#include "Rock.h"
-#include "UserInterface.h"
+#include "GameSettings.h"
 
 namespace ApplesGame
 {
-
-	enum class GameSettings
+	enum class GameOptions: std::uint8_t
 	{
-		Default = 0 << 0,
 		InfiniteApples = 1 << 0,
-		Acceleration = 1 << 1,
+		WithAcceleration = 1 << 1,
+
+		Default = InfiniteApples | WithAcceleration,
+		Empty = 0
 	};
 
-	enum class GameState
+	struct RecordsTableItem
+	{
+		std::string name;
+		int score = 0;
+	};
+
+	bool operator<(const RecordsTableItem& lhs, const RecordsTableItem& rhs);
+
+	enum class GameStateType
 	{
 		None = 0,
+		MainMenu,
 		Playing,
-		GameOver
+		GameOver,
+		ExitDialog,
+		Records
+	};
+
+	struct GameState
+	{
+		GameStateType type = GameStateType::None;
+		void* data = nullptr;
+		bool isExclusivelyVisible = false;
+	};
+
+	enum class GameStateChangeType
+	{
+		None,
+		Push,
+		Pop,
+		Switch
 	};
 
 	struct Game
 	{
-		Player player;
-		Apple apples[NUM_APPLES];
-		Rock rocks[NUM_ROCKS];
-		std::unordered_map<std::string, int> recordsTable;
-
 		std::vector<GameState> gameStateStack;
+		GameStateChangeType gameStateChangeType = GameStateChangeType::None;
+		GameStateType pendingGameStateType = GameStateType::None;
+		bool pendingGameStateIsExclusivelyVisible = false;
 
-		float startDelay = 0.f;
-		int numEatenApples = 0;
-		int randomApplesCount = 0;
-
-		sf::Texture playerTexture;
-		sf::Texture appleTexture;
-		sf::Texture rockTexture;
-
-		sf::SoundBuffer deathSoundBuffer;
-		sf::Sound deathSound;
-
-		sf::SoundBuffer eatingSoundBuffer;
-		sf::Sound eatingSound;
-
-		UserInterface userInterface;
-		sf::Font font;
-
-		GameSettings gameSettings = GameSettings::Default;
+		GameOptions options = GameOptions::Default;
+		RecordsTableItem recordsTable[MAX_RECORDS_TABLE_SIZE];
 	};
 
+	
 	void InitGame(Game& game);
-
-	void UpdateGame(Game& game, float deltaTime, float currentTime);
-
-	void RestartGame(Game& game, sf::Clock& gameClock);
-
+	void HandleWindowEvents(Game& game, sf::RenderWindow& window);
+	bool UpdateGame(Game& game, float timeDelta);
 	void DrawGame(Game& game, sf::RenderWindow& window);
+	void ShutdownGame(Game& game);
 
-	void ToggleGameSettings(Game& game, GameSettings gameSettings);
+	void PushGameState(Game& game, GameStateType stateType, bool isExclusivelyVisible);
 
-	bool IsGameSettingsOn(const Game& game, GameSettings gameSettings);
+	void PopGameState(Game& game);
+
+	void SwitchGameState(Game& game, GameStateType newState);
+
+	void InitGameState(Game& game, GameState& state);
+	void ShutdownGameState(Game& game, GameState& state);
+	void HandleWindowEventGameState(Game& game, GameState& state, sf::Event& event);
+	void UpdateGameState(Game& game, GameState& state, float timeDelta);
+	void DrawGameState(Game& game, GameState& state, sf::RenderWindow& window);
 }

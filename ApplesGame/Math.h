@@ -1,35 +1,39 @@
 #pragma once
-
-namespace sf
-{
-	class Sprite;
-	class Text;
-}
+#include <SFML/Graphics.hpp>
 
 namespace ApplesGame
 {
 	struct Vector2D
 	{
-		float x = 0;
-		float y = 0;
+		float x = 0.f;
+		float y = 0.f;
 	};
 
-	typedef Vector2D Position2D;
+	Vector2D operator+(const Vector2D& lhs, const Vector2D& rhs);
 
-	Position2D GetRandomPositionInScreen(float screenWidth, float screenHeight);
 
-	Position2D GetRandomPositionWithRange(float minX, float minY, float maxX, float maxY);
+	typedef Vector2D Position;
 
-	int GetRandomNumberWithRange(int min, int max);
+	sf::Vector2f OurVectorToSf(const Vector2D& v);
+	sf::Vector2f GetSpriteScale(const sf::Sprite& sprite, const Vector2D& desiredSize);
+	sf::Vector2f GetItemOrigin(const sf::Sprite& sprite, const Vector2D& relativePosition);
+	sf::Vector2f GetItemOrigin(const sf::Text& text, const sf::Vector2f& relativePosition);
 
-	bool IsRectanglesCollide(Position2D rect1Position, Vector2D rect1Size, Position2D rect2Position, Vector2D rect2Size);
+	// Helper method for organizing text items
+	enum class Orientation
+	{
+		Horizontal,
+		Vertical
+	};
 
-	bool IsCiclesCollide(Position2D circle1Position, float circle1Radius, Position2D circle2Position, float circle2Radius);
+	enum class Alignment
+	{
+		Min, // Left or Top
+		Middle,
+		Max // Right or Bottom
+	};
 
-	void SetSpriteSize(sf::Sprite& sprite, float desiredWidth, float desiredHeight);
+	void DrawItemsList(sf::RenderWindow& window, const std::vector<sf::Text*>& items, float spacing, Orientation orientation, Alignment alignment, const sf::Vector2f& position, const sf::Vector2f& origin);
 
-	void SetSpriteRelativeOrigin(sf::Sprite& sprite, float originX, float originY);
-
-	Position2D GetTextOrigin(sf::Text& text);
+	bool IsPointInRect(Vector2D point, Vector2D rectTL, Vector2D rectBR);
 }
-

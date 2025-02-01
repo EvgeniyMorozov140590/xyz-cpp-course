@@ -1,90 +1,93 @@
-#include "Game.h"
+#include "Player.h"
+#include <assert.h>
+#include "GameSettings.h"
+#include "Apple.h"
+
 
 namespace ApplesGame
 {
-	void InitPlayer(Player& player, const Game& game)
+	void InitPlayer(Player& player, const sf::Texture& texture)
 	{
-		player.position = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
+		// Init player state
+		player.position.x = (float)SCREEN_WIDTH / 2.f;
+		player.position.y = (float)SCREEN_HEGHT / 2.f;
 		player.speed = INITIAL_SPEED;
-		player.direction = PlayerDirection::Right;
+		player.direction = PlayerDirection::Up;
 
-		player.sprite.setTexture(game.playerTexture);
-
-		SetSpriteSize(player.sprite, PLAYER_SIZE, PLAYER_SIZE);
-		SetSpriteRelativeOrigin(player.sprite, 0.5f, 0.5f);
-
-		sf::FloatRect spriteRect = player.sprite.getLocalBounds();
-		player.sprite.setTextureRect(sf::IntRect(0, 0, (int)spriteRect.width, (int)spriteRect.height));
-		player.sprite.setRotation(0);
+		// Init sprite
+		player.sprite.setTexture(texture);
+		player.sprite.setOrigin(GetItemOrigin(player.sprite, {0.5f, 0.5f})); // We need to use texture as origin ignores scale
+		player.sprite.setScale(GetSpriteScale(player.sprite, {PLAYER_SIZE, PLAYER_SIZE}));
 	}
 
-	void DrawPlayer(Player& player, sf::RenderWindow& window)
+	void UpdatePlayer(Player& player, float timeDelta)
 	{
-		player.sprite.setPosition(player.position.x, player.position.y);
-
-		window.draw(player.sprite);
-	}
-
-	void MovePlayer(Player& player, float deltaTime)
-	{
-		sf::FloatRect spriteRect = player.sprite.getLocalBounds();
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-			player.direction = PlayerDirection::Right;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
-			player.direction = PlayerDirection::Up;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-			player.direction = PlayerDirection::Left;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		{
-			player.direction = PlayerDirection::Down;
-		}
-
+		// Move player
 		switch (player.direction)
 		{
-			case PlayerDirection::Right:
-			{
-				player.position.x += player.speed * deltaTime;
-
-				player.sprite.setTextureRect(sf::IntRect(0, 0, (int)spriteRect.width, (int)spriteRect.height));
-				player.sprite.setRotation(0);
-
-				break;
-			}
 			case PlayerDirection::Up:
 			{
-				player.position.y -= player.speed * deltaTime;
-
-				player.sprite.setTextureRect(sf::IntRect(0, 0, (int)spriteRect.width, (int)spriteRect.height));
-				player.sprite.setRotation(-90);
-
+				player.position.y -= player.speed * timeDelta;
 				break;
 			}
-			case PlayerDirection::Left:
+			case PlayerDirection::Right:
 			{
-				player.position.x -= player.speed * deltaTime;
-
-				player.sprite.setTextureRect(sf::IntRect((int)spriteRect.width, 0, (int)-spriteRect.width, (int)spriteRect.height));
-				player.sprite.setRotation(0);
-
+				player.position.x += player.speed * timeDelta;
 				break;
 			}
 			case PlayerDirection::Down:
 			{
-				player.position.y += player.speed * deltaTime;
-
-				player.sprite.setTextureRect(sf::IntRect(0, 0, (int)spriteRect.width, (int)spriteRect.height));
-				player.sprite.setRotation(90);
-
+				player.position.y += player.speed * timeDelta;
+				break;
+			}
+			case PlayerDirection::Left:
+			{
+				player.position.x -= player.speed * timeDelta;
 				break;
 			}
 		}
 	}
-}
 
+	bool HasPlayerCollisionWithScreenBorder(const Player& player)
+	{
+		return !IsPointInRect(player.position, { 0.f, 0.f }, { (float)SCREEN_WIDTH, (float)SCREEN_HEGHT } );
+	}
+
+	void DrawPlayer(Player& player, sf::RenderWindow& window)
+	{
+		player.sprite.setPosition(OurVectorToSf(player.position));
+
+		const sf::Vector2f spriteScale = (GetSpriteScale(player.sprite, { PLAYER_SIZE, PLAYER_SIZE }));
+
+		// We need to rotate and flip sprite to match player direction
+		switch (player.direction)
+		{
+			case PlayerDirection::Up:
+			{
+				player.sprite.setScale(spriteScale.x, spriteScale.y);
+				player.sprite.setRotation(-90.f);
+				break;
+			}
+			case PlayerDirection::Right:
+			{
+				player.sprite.setScale(spriteScale.x, spriteScale.y);
+				player.sprite.setRotation(0.f);
+				break;
+			}
+			case PlayerDirection::Down:
+			{
+				player.sprite.setScale(spriteScale.x, spriteScale.y);
+				player.sprite.setRotation(90.f);
+				break;
+			}
+			case PlayerDirection::Left:
+			{
+				player.sprite.setScale(-spriteScale.x, spriteScale.y);
+				player.sprite.setRotation(0.f);
+				break;
+			}
+		}
+
+		window.draw(player.sprite);
+	}
+}

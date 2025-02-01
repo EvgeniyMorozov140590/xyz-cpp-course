@@ -1,32 +1,30 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Math.h"
-#include "Constants.h"
+#include "GameSettings.h"
 
 namespace ApplesGame
 {
 	enum class PlayerDirection
 	{
-		Right = 0,
-		Up,
-		Left,
-		Down
+		Up = 0,
+		Right,
+		Down,
+		Left
 	};
 
-	struct Player {
-		Position2D position;
-		float speed = INITIAL_SPEED;
-		PlayerDirection direction = PlayerDirection::Right;
+	struct Player
+	{
+		Position position;
+		float speed = 0.f; // Pixels per second
+		PlayerDirection direction = PlayerDirection::Up;
 		sf::Sprite sprite;
 	};
 
-	struct Game;
+	void InitPlayer(Player& player, const sf::Texture& texture);
+	void UpdatePlayer(Player& player, float timeDelta);
 
-	void InitPlayer(Player& player, const Game& game);
+	bool HasPlayerCollisionWithScreenBorder(const Player& player);
 
 	void DrawPlayer(Player& player, sf::RenderWindow& window);
-
-	void MovePlayer(Player& player, float deltaTime);
 }
-
-
